@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Solution IA pour agents immobiliers - Triple tes ventes avec l'intelligence artificielle">
+    <title>Vocalizen.ai - L'IA qui révolutionne ton business immobilier</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-inner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid var(--light);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Navigation Sticky Améliorée */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 0;
+            box-shadow: var(--shadow-md);
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: var(--primary);
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Hero Section Dynamique */
+        .hero {
+            padding: 8rem 0 5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            from { transform: translateY(0); }
+            to { transform: translateY(-60px); }
+        }
+
+        .hero-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .hero h1 .highlight-danger {
+            color: #fbbf24;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            max-width: 700px;
+        }
+
+        /* Alert Box Améliorée */
+        .alert-box {
+            background: rgba(239, 68, 68, 0.15);
+            border-left: 4px solid var(--danger);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-box p {
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .alert-box strong {
+            color: #fbbf24;
+            font-weight: 700;
+        }
+
+        /* Stats Grid Animée */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Section Base */
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* Feature Cards Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card strong {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .benefit-tag {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+            animation: bounceIn 0.6s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Section Données Améliorée */
+        .section-alt {
+            background: var(--light);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .data-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .data-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .data-metric {
+            text-align: right;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .data-card p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .data-list {
+            list-style: none;
+        }
+
+        .data-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .data-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Process Cards */
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .process-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .process-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 2rem;
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .process-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            margin-top: 1rem;
+            color: var(--dark);
+        }
+
+        .process-card p {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .time-tag {
+            background: var(--success);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        /* CTA Final */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 6rem 0;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .cta-section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-box {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 16px;
+            margin: 2rem auto;
+            max-width: 700px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .big-cta-button {
+            background: white;
+            color: var(--primary);
+            padding: 1.25rem 3rem;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .big-cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Mobile Menu */
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .mobile-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--dark);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                box-shadow: var(--shadow-lg);
+                transition: 0.3s;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .mobile-toggle {
+                display: flex;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .features-grid,
+            .data-grid,
+            .process-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            z-index: 9999;
+            transition: width 0.3s;
+        }
+
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-lg);
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Text Highlights */
+        .text-danger {
+            color: var(--danger);
+            font-weight: 700;
+        }
+
+        .text-success {
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .text-primary {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Smooth reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-inner"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">Vocalizen.ai</div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home">Accueil</a></li>
+                <li><a href="#agent-vocal">Agent Vocal</a></li>
+                <li><a href="#donnees">Données</a></li>
+                <li><a href="#automatisation">Automatisation</a></li>
+                <li><a href="#contact" class="cta-button pulse">📞 07 60 88 43 20</a></li>
+            </ul>
+            
+            <div class="mobile-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div data-aos="fade-up">
+                <h1>Tu perds <span class="highlight-danger">de l'argent</span> chaque jour sans l'IA</h1>
+            </div>
+            
+            <div data-aos="fade-up" data-aos-delay="200">
+                <p class="subtitle">
+                    Pendant que tu fais 10 appels, tes concurrents avec l'IA en font <strong>200</strong>.<br>
+                    Pendant que tu cherches 5 prospects, ils en trouvent <strong>500</strong>.<br>
+                    Il est temps de passer à la vitesse supérieure.
+                </p>
+            </div>
+
+            <div data-aos="fade-left" data-aos-delay="400">
+                <div class="alert-box">
+                    <p>
+                        <strong>⚠️ ALERTE MARCHÉ :</strong> Les agents qui utilisent l'IA génèrent 
+                        <span class="text-danger">3x plus de commissions</span>. Ce n'est pas de la magie, 
+                        c'est de la technologie. L'IA travaille 24h/24 pendant que tu dors.
+                    </p>
+                </div>
+            </div>
+
+            <div class="stats-grid" data-aos="zoom-in" data-aos-delay="600">
+                <div class="stat-card">
+                    <span class="stat-number counter" data-target="300">0</span>
+                    <span class="stat-label">% Plus de ventes</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number counter" data-target="70">0</span>
+                    <span class="stat-label">% Temps gagné</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Disponibilité</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number counter" data-target="200">0</span>
+                    <span class="stat-label">Appels/jour</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Agent Vocal Section -->
+    <section class="section" id="agent-vocal">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Agent Vocal IA</span>
+                <h2>Ton commercial qui <span class="text-primary">ne dort jamais</span></h2>
+                <p class="section-subtitle">
+                    Imagine un assistant qui appelle tes prospects 24h/24, parle 3 langues 
+                    et ne rate jamais une opportunité. C'est exactement ça.
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-icon">🌍</div>
+                    <h3>Multilingue <span class="text-success">FR/EN/HE</span></h3>
+                    <p>
+                        Ton agent s'adapte <strong>automatiquement</strong> à la langue du client. 
+                        Plus de barrière linguistique avec les investisseurs internationaux. 
+                        <strong>Paris, Londres, Tel Aviv</strong> : tu couvres tout.
+                    </p>
+                    <span class="benefit-tag">+40% clients internationaux</span>
+                </div>
+
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Réponse en <span class="text-danger">3 secondes</span></h3>
+                    <p>
+                        <strong>78% des prospects</strong> appellent le premier qui répond. 
+                        Ton IA décroche instantanément, même à 23h un dimanche. 
+                        Plus jamais de mandat perdu à cause d'un appel manqué.
+                    </p>
+                    <span class="benefit-tag">78% conversion en plus</span>
+                </div>
+
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Qualification <span class="text-primary">intelligente</span></h3>
+                    <p>
+                        L'IA pose les <strong>bonnes questions</strong> : budget, timing, motivation. 
+                        Tu reçois un scoring précis : <span class="text-success">chaud</span>, 
+                        <span class="text-warning">tiède</span> ou <span class="text-danger">froid</span>. 
+                        Fini le temps perdu avec les curieux.
+                    </p>
+                    <span class="benefit-tag">90% temps économisé</span>
+                </div>
+
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-icon">📅</div>
+                    <h3>Prise de RDV <span class="text-success">automatique</span></h3>
+                    <p>
+                        L'IA consulte ton agenda, propose les créneaux et <strong>confirme par SMS</strong>. 
+                        Plus de va-et-vient interminable. Tu arrives le matin, 
+                        ton planning est déjà <strong>optimisé</strong>.
+                    </p>
+                    <span class="benefit-tag">5x plus de RDV</span>
+                </div>
+
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="500">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Relance <span class="text-primary">perpétuelle</span></h3>
+                    <p>
+                        Chaque prospect tiède est relancé <strong>au moment optimal</strong>. 
+                        L'IA n'oublie jamais, ne se décourage jamais. 
+                        Des ventes que tu aurais abandonnées se <strong>concrétisent</strong>.
+                    </p>
+                    <span class="benefit-tag">45% ventes récupérées</span>
+                </div>
+
+                <div class="feature-card reveal" data-aos="fade-up" data-aos-delay="600">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard <span class="text-success">temps réel</span></h3>
+                    <p>
+                        Chaque matin : <strong>qui appeler</strong>, qui est prêt à signer, 
+                        qui hésite. Tu sais exactement où concentrer ton énergie 
+                        pour <strong>maximiser tes commissions</strong>.
+                    </p>
+                    <span class="benefit-tag">Décisions éclairées</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Données -->
+    <section class="section section-alt" id="donnees">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Intelligence des données</span>
+                <h2>Trouve prospects et biens <span class="text-danger">avant tout le monde</span></h2>
+                <p class="section-subtitle">
+                    L'IA scanne le web 24h/24. Tu as l'information avant tes concurrents, 
+                    tu signes avant eux. C'est mathématique.
+                </p>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="data-header">
+                        <div class="data-icon">🏠</div>
+                        <div class="data-metric">
+                            <span class="metric-value">15h</span>
+                            <span class="metric-label">économisées/sem</span>
+                        </div>
+                    </div>
+                    <h3>Sites d'annonces <span class="text-primary">en temps réel</span></h3>
+                    <p>
+                        <strong>SeLoger, LeBonCoin, PAP</strong>... L'IA surveille TOUT. 
+                        Alerte instantanée dès qu'un bien matche tes clients.
+                    </p>
+                    <ul class="data-list">
+                        <li>Détection nouvelles annonces</li>
+                        <li>Contact propriétaires en premier</li>
+                        <li>Analyse prix marché</li>
+                    </ul>
+                </div>
+
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="data-header">
+                        <div class="data-icon">📋</div>
+                        <div class="data-metric">
+                            <span class="metric-value">2-4</span>
+                            <span class="metric-label">sem d'avance</span>
+                        </div>
+                    </div>
+                    <h3>Registres publics <span class="text-success">exploités</span></h3>
+                    <p>
+                        <strong>Permis, mutations, successions</strong>... L'IA fouille 
+                        ce que personne ne regarde. Tu sais qui vend avant l'annonce.
+                    </p>
+                    <ul class="data-list">
+                        <li>Données notariales quotidiennes</li>
+                        <li>Projets immobiliers détectés</li>
+                        <li>100% légal RGPD</li>
+                    </ul>
+                </div>
+
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="data-header">
+                        <div class="data-icon">💬</div>
+                        <div class="data-metric">
+                            <span class="metric-value">50+</span>
+                            <span class="metric-label">prospects/jour</span>
+                        </div>
+                    </div>
+                    <h3>Réseaux sociaux <span class="text-primary">scrutés</span></h3>
+                    <p>
+                        <strong>"Je cherche", "Je vends"</strong>... L'IA détecte ces posts 
+                        sur Facebook, LinkedIn, forums. Tu contactes avant les agences.
+                    </p>
+                    <ul class="data-list">
+                        <li>Groupes immobiliers locaux</li>
+                        <li>Détection intentions</li>
+                        <li>Profils enrichis auto</li>
+                    </ul>
+                </div>
+
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="data-header">
+                        <div class="data-icon">🏢</div>
+                        <div class="data-metric">
+                            <span class="metric-value">100%</span>
+                            <span class="metric-label">exclusivités</span>
+                        </div>
+                    </div>
+                    <h3>Entreprises <span class="text-success">surveillées</span></h3>
+                    <p>
+                        <strong>Expansions, déménagements</strong>... L'IA te prévient 
+                        immédiatement. Opportunités invisibles pour tes concurrents.
+                    </p>
+                    <ul class="data-list">
+                        <li>Créations d'entreprises</li>
+                        <li>Besoins immobiliers pro</li>
+                        <li>Libérations de locaux</li>
+                    </ul>
+                </div>
+
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="data-header">
+                        <div class="data-icon">📧</div>
+                        <div class="data-metric">
+                            <span class="metric-value">95%</span>
+                            <span class="metric-label">contacts trouvés</span>
+                        </div>
+                    </div>
+                    <h3>Enrichissement <span class="text-primary">automatique</span></h3>
+                    <p>
+                        Un nom suffit. L'IA trouve <strong>téléphone, email, LinkedIn</strong>. 
+                        Tu appelles avec toutes les infos en main.
+                    </p>
+                    <ul class="data-list">
+                        <li>Coordonnées complètes</li>
+                        <li>Profil social et pro</li>
+                        <li>Historique interactions</li>
+                    </ul>
+                </div>
+
+                <div class="data-card" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="data-header">
+                        <div class="data-icon">🔍</div>
+                        <div class="data-metric">
+                            <span class="metric-value">24/7</span>
+                            <span class="metric-label">surveillance</span>
+                        </div>
+                    </div>
+                    <h3>Concurrence <span class="text-danger">analysée</span></h3>
+                    <p>
+                        <strong>Prix, biens, stratégies</strong>... Tu sais tout en temps réel. 
+                        Tu ajustes pour garder l'avantage permanent.
+                    </p>
+                    <ul class="data-list">
+                        <li>Analyse prix local</li>
+                        <li>Nouvelles agences</li>
+                        <li>Meilleures pratiques</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Automatisation -->
+    <section class="section" id="automatisation">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-badge">Automatisation complète</span>
+                <h2>Fini la paperasse, <span class="text-success">place aux commissions</span></h2>
+                <p class="section-subtitle">
+                    L'IA gère le répétitif et le chiant. Tu te concentres uniquement 
+                    sur ce qui rapporte : négocier et vendre.
+                </p>
+            </div>
+
+            <div class="process-grid">
+                <div class="process-card" data-aos="flip-left" data-aos-delay="100">
+                    <div class="step-number">1</div>
+                    <h3>Emails <span class="text-primary">personnalisés</span></h3>
+                    <p>
+                        Chaque prospect reçoit des emails qui semblent <strong>écrits pour lui</strong>. 
+                        Suivi après visite, nouvelles annonces, conseils marché...
+                    </p>
+                    <p><strong>Exemples :</strong> "3 biens pour vous", "Évolution prix quartier"...</p>
+                    <span class="time-tag">10h/sem gagnées</span>
+                </div>
+
+                <div class="process-card" data-aos="flip-left" data-aos-delay="200">
+                    <div class="step-number">2</div>
+                    <h3>Documents <span class="text-success">classés auto</span></h3>
+                    <p>
+                        Factures, contrats, compromis... Tout est <strong>organisé automatiquement</strong>. 
+                        Retrouve n'importe quoi en 2 secondes.
+                    </p>
+                    <p><strong>Bonus :</strong> Rappels échéances, rapports clients, archivage légal...</p>
+                    <span class="time-tag">8h/sem gagnées</span>
+                </div>
+
+                <div class="process-card" data-aos="flip-left" data-aos-delay="300">
+                    <div class="step-number">3</div>
+                    <h3>Scoring <span class="text-danger">intelligent</span></h3>
+                    <p>
+                        L'IA analyse : emails ouverts, liens cliqués, comportements... 
+                        Tu sais <strong>exactement qui va signer</strong>.
+                    </p>
+                    <p><strong>Résultat :</strong> Tu passes ton temps avec les bons prospects.</p>
+                    <span class="time-tag">+60% conversion</span>
+                </div>
+
+                <div class="process-card" data-aos="flip-left" data-aos-delay="400">
+                    <div class="step-number">4</div>
+                    <h3>Agenda <span class="text-primary">optimisé</span></h3>
+                    <p>
+                        Visites groupées par quartier, trajets minimisés, <strong>alertes trafic</strong>. 
+                        Plus de visites, moins de route.
+                    </p>
+                    <p><strong>Smart :</strong> Dossiers préparés, rappels clients, gestion annulations...</p>
+                    <span class="time-tag">5h/sem gagnées</span>
+                </div>
+
+                <div class="process-card" data-aos="flip-left" data-aos-delay="500">
+                    <div class="step-number">5</div>
+                    <h3>Reporting <span class="text-success">automatique</span></h3>
+                    <p>
+                        Prospects contactés, taux conversion, <strong>CA prévisionnel</strong>... 
+                        Tu pilotes ton business comme un pro.
+                    </p>
+                    <p><strong>Dashboard :</strong> Graphiques clairs, objectifs suivis, comparaisons...</p>
+                    <span class="time-tag">Décisions éclairées</span>
+                </div>
+
+                <div class="process-card" data-aos="flip-left" data-aos-delay="600">
+                    <div class="step-number">6</div>
+                    <h3>Suivi <span class="text-primary">post-vente</span></h3>
+                    <p>
+                        Messages de suivi, <strong>avis Google</strong>, demandes recommandations. 
+                        Tes clients deviennent tes commerciaux.
+                    </p>
+                    <p><strong>Impact :</strong> Plus d'avis 5 étoiles, plus de recommandations.</p>
+                    <span class="time-tag">+200% recommandations</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Final -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2 data-aos="fade-up">Chaque jour sans IA = <span class="text-danger">argent perdu</span></h2>
+            <p data-aos="fade-up" data-aos-delay="100">
+                Pendant que tu lis, un concurrent IA-équipé signe un mandat qui aurait pu être le tien.
+            </p>
+            
+            <div class="cta-box" data-aos="zoom-in" data-aos-delay="200">
+                <h3>⏰ Le compte à rebours est lancé :</h3>
+                <p style="text-align: left;">
+                    • Chaque mois sans IA = <span class="text-danger">30% prospects perdus</span><br>
+                    • Les meilleurs agents <span class="text-success">s'équipent massivement</span><br>
+                    • Les clients exigent du <span class="text-primary">service instantané</span><br>
+                    • Plus tu attends, plus le <span class="text-danger">retard se creuse</span>
+                </p>
+            </div>
+            
+            <a href="tel:+33760884320" class="big-cta-button pulse" data-aos="fade-up" data-aos-delay="300">
+                📞 Appelle maintenant : 07 60 88 43 20
+            </a>
+            
+            <p style="margin-top: 1.5rem;" data-aos="fade-up" data-aos-delay="400">
+                Démo 30 min • Sans engagement • Résultats en 48h
+            </p>
+        </div>
+    </section>
+
+    <!-- Back to Top -->
+    <div class="back-to-top" id="backToTop">↑</div>
+
+    <!-- AOS Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+
+        // Hide loader when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 500);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+
+            // Progress bar
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Back to top button
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Mobile menu toggle
+        document.getElementById('mobileToggle').addEventListener('click', () => {
+            document.getElementById('navMenu').classList.toggle('active');
+        });
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Close mobile menu if open
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
+        });
+
+        // Back to top
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Counter animation
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const countUp = () => {
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const count = +counter.innerText;
+                const increment = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(countUp, 10);
+                } else {
+                    counter.innerText = target + '%';
+                }
+            });
+        };
+
+        // Start counter when in viewport
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    countUp();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats-grid');
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+
+        // Reveal animation on scroll
+        const reveals = document.querySelectorAll('.reveal');
+        
+        const revealOnScroll = () => {
+            reveals.forEach(element => {
+                const windowHeight = window.innerHeight;
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    element.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Check on load
+
+        // Dynamic typing effect for hero title
+        const typeWriter = (element, text, speed = 50) => {
+            let i = 0;
+            element.innerHTML = '';
+            
+            const type = () => {
+                if (i < text.length) {
+                    if (text.substring(i, i + 28) === '<span class="highlight-danger">') {
+                        const endSpan = text.indexOf('</span>', i) + 7;
+                        element.innerHTML += text.substring(i, endSpan);
+                        i = endSpan;
+                    } else {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                    }
+                    setTimeout(type, speed);
+                }
+            };
+            
+            type();
+        };
+
+        // Apply typing effect to hero title after loader
+        setTimeout(() => {
+            const h1 = document.querySelector('.hero h1');
+            if (h1) {
+                const originalText = h1.innerHTML;
+                typeWriter(h1, originalText, 40);
+            }
+        }, 600);
+
+        // Parallax effect for hero
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
